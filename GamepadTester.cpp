@@ -140,7 +140,6 @@ void GetInput(DWORD i, XINPUT_KEYSTROKE key, XINPUT_VIBRATION vibration)
 					break;
 			}
 		}
-		//std::this_thread::sleep_for (std::chrono::seconds(1));
 	}
 }
 
@@ -152,30 +151,36 @@ int main(int argc, char** argv)
 	static XINPUT_VIBRATION vibration{};
 
 	DWORD connectedControllers = NumberOfControllers(state);
-	DWORD selectedController;
+	DWORD selectedController = 0;
 	DWORD selectedInput = 0;
 
-	if (connectedControllers == 1)
-	{
-		selectedController = 0;
-	}
-	else if (connectedControllers > 1)
-	{
-		std::cout << "select input port between 0 and " << connectedControllers-1 << std::endl;
 
-		do {
-			std::cin >> selectedInput;
-		} while (selectedInput > connectedControllers - 1 && !std::cin);
-
+	if (connectedControllers < 1)
+	{
+		std::cout << "No device found, shutting down" << std::endl;
 	}
 	else
 	{
-		std::cout << "No device found, shutting down" << std::endl;
-		return 0;
+		if (connectedControllers == 1)
+		{
+			selectedController = 0;
+		}
+		else
+		{
+			std::cout << "select input port between 0 and " << connectedControllers-1 << std::endl;
+
+			do {
+				std::cin >> selectedInput;
+			} while (selectedInput > connectedControllers - 1 && !std::cin);
+
+		}
+
+		CheckBatteryStatus(selectedController, batteryInformation);
+		GetInput(selectedInput, key, vibration);
 	}
 
-	CheckBatteryStatus(selectedController, batteryInformation);
-	GetInput(selectedInput, key, vibration);
+
+
 
 	return 0;
 }
