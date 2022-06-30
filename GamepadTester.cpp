@@ -5,14 +5,11 @@
 #include <chrono>
 #include <thread>
 
-// Return the number of controllers connected seen by the OS
 DWORD NumberOfControllers(XINPUT_STATE state)
 {
 	DWORD connectedControllers = 0;
 	for (DWORD i=0; i< XUSER_MAX_COUNT; i++ )
 	{
-		
-		ZeroMemory( &state, sizeof(XINPUT_STATE) );
 
 		// Simply get the state of the controller from XInput.
 		DWORD dwResult = XInputGetState( i, &state );
@@ -31,7 +28,6 @@ DWORD NumberOfControllers(XINPUT_STATE state)
 	return connectedControllers;
 }
 
-// If the connected controller is wireless, return its battery status
 void CheckBatteryStatus(DWORD i, XINPUT_BATTERY_INFORMATION batteryInformation)
 {
 	DWORD battery = XInputGetBatteryInformation(i, BATTERY_DEVTYPE_GAMEPAD, &batteryInformation);
@@ -62,7 +58,6 @@ void CheckBatteryStatus(DWORD i, XINPUT_BATTERY_INFORMATION batteryInformation)
 	}
 }
 
-// Check which button the user has pressed
 void GetInput(DWORD i, XINPUT_KEYSTROKE key, XINPUT_VIBRATION vibration)
 {
 	bool getInput = true;
@@ -145,16 +140,16 @@ void GetInput(DWORD i, XINPUT_KEYSTROKE key, XINPUT_VIBRATION vibration)
 					break;
 			}
 		}
+		//std::this_thread::sleep_for (std::chrono::seconds(1));
 	}
 }
 
-// Main starts here
 int main(int argc, char** argv)
 {
-	static XINPUT_STATE state;
-	static XINPUT_BATTERY_INFORMATION batteryInformation;
-	static XINPUT_KEYSTROKE key;
-	static XINPUT_VIBRATION vibration;
+	static XINPUT_STATE state{};
+	static XINPUT_BATTERY_INFORMATION batteryInformation{};
+	static XINPUT_KEYSTROKE key{};
+	static XINPUT_VIBRATION vibration{};
 
 	DWORD connectedControllers = NumberOfControllers(state);
 	DWORD selectedController;
